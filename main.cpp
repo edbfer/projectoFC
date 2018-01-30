@@ -6,6 +6,7 @@
 #include "complex.h"
 #include "matriz.h"
 #include "aux.h"
+#include "cuda.cuh"
 
 using namespace std;
 
@@ -43,7 +44,7 @@ complex f(int i, int j, complex c, complex c1, complex c2, complex c3, complex c
 {
   /*matriz res(l.n, l.m);
   #pragma omp parallel for
-  for(int i = 1; i<l.n-1; i++)
+  for(int i = 1; i<l.n-1; i++)iterate
   {
     for(int j = 1; j<l.m-1; j++)
     {*/
@@ -206,13 +207,14 @@ int main(int argc, char const *argv[]) {
 
   for(float t = 0.0f; t<tmax; t += dt)
   {
-    temp = engolindo_sapos(psi);
+    //temp = engolindo_sapos(psi);
     //temp = runge_kutta(psi);
+    temp = cuda_doround(psi);
     /*ofstream ouch("lloo.txt");
     aux::printCoord(ouch, temp);
       int lel; cin >> lel; cout << "running" << endl;*/
 
-    float no = 0.;// = aux::norma(temp);
+    /*float no = 0.;// = aux::norma(temp);
     for(int i = 0; i<temp.n; i++)
     {
       for(int j = 0; j<temp.m; j++)
@@ -229,9 +231,9 @@ int main(int argc, char const *argv[]) {
       {
         temp(i, j) = temp(i, j) / multi;
       }
-    }
+    }*/
 
-    cout << "Iteração: " << iter << " <=> Norma: " << no << " <=> T: " << t << endl;
+    cout << "Iteração: " << iter << /*" <=> Norma: " << no <<*/ " <=> T: " << t << endl;
 
     stringstream f, op;
     f << "dados/t" << iter++ << ".txt";

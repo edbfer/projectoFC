@@ -4,31 +4,31 @@
 using namespace std;
 
 
-complex::complex() : real(0.), im(0.)
+__host__ __device__ complex::complex() : real(0.), im(0.)
 {}
 
-complex::complex(int real) : real(real), im(0.)
+__host__ __device__ complex::complex(int real) : real(real), im(0.)
 {}
 
-complex::complex(float real): real(real), im(0.)
+__host__ __device__ complex::complex(float real): real(real), im(0.)
 {}
 
-complex::complex(double real): real(real), im(0.)
+__host__ __device__ complex::complex(double real): real(real), im(0.)
 {}
 
-complex::complex(float real, float im) : real(real), im(im)
+__host__ __device__ complex::complex(float real, float im) : real(real), im(im)
 {}
 
-complex::complex(const complex& c): real(c.real), im(c.im)
+__host__ __device__ complex::complex(const complex& c): real(c.real), im(c.im)
 {}
 
-complex operator+(const complex& c1, const complex& c2)
+__host__ __device__ complex operator+(const complex& c1, const complex& c2)
 {
 	complex res(c1.real + c2.real, c1.im + c2.im);
 	return res;
 }
 
-complex operator-(const complex& c1, const complex& c2)
+__host__ __device__ complex operator-(const complex& c1, const complex& c2)
 {
 	complex res(c1.real - c2.real, c1.im - c2.im);
 	return res;
@@ -40,31 +40,31 @@ complex operator-(const complex& c1, const complex& c2)
 	return res;
 }*/
 
-complex complex::operator~() const
+__host__ __device__ complex complex::operator~() const
 {
 	complex res(real, -im);
 	return res;
 }
 
-complex operator*(const complex& c1, const complex& c2)
+__host__ __device__ complex operator*(const complex& c1, const complex& c2)
 {
 	complex res(c1.real*c2.real - c1.im*c2.im, c1.real*c2.im + c2.real*c1.im);
 	return res;
 }
 
-complex operator*(const float a, const complex& c1)
+__host__ __device__ complex operator*(const float a, const complex& c1)
 {
 	complex res(c1.real * a, c1.im * a);
 	return res;
 }
 
-complex operator*(const complex& c1, const float a)
+__host__ __device__ complex operator*(const complex& c1, const float a)
 {
 	complex res(c1.real * a, c1.im * a);
 	return res;
 }
 
-complex operator/(const complex& c1, const complex& c2)
+__host__ __device__ complex operator/(const complex& c1, const complex& c2)
 {
 	/*complex res(0, 0);
 	float m = c2.real * c2.real + c2.im * c2.im;
@@ -83,19 +83,19 @@ complex operator/(const complex& c1, const complex& c2)
 
 }
 
-complex operator/(const complex& c1, const float a)
+__host__ __device__ complex operator/(const complex& c1, const float a)
 {
 	complex res(c1.real / a, c1.im / a);
 	return res;
 }
 
-complex operator/(const float a, const complex& c1)
+__host__ __device__ complex operator/(const float a, const complex& c1)
 {
 	complex res(c1.real / a, c1.im / a);
 	return res;
 }
 
-int operator==(const complex & c1, const complex & c2)
+__host__ __device__ int operator==(const complex & c1, const complex & c2)
 {
 	if ((c1.real == c2.real) && (c1.im == c2.im))
 	return 1;
@@ -116,7 +116,7 @@ istream& operator>>(istream& in, complex& c1)
 	return in;
 }
 
-float complex::mod() const
+__host__ __device__ float complex::mod() const
 {
 	return sqrt(real*real + im*im);
 }
