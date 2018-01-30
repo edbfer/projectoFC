@@ -213,19 +213,14 @@ int main(int argc, char const *argv[]) {
 
   clock_t time;
 
-  cuda_simulate(psi, tmax);
-  /*for(float t = 0.0f; t<tmax; t += dt)
+  //cuda_simulate(psi, tmax);
+  for(float t = 0.0f; t<tmax; t += dt)
   {
     //temp = engolindo_sapos(psi);
     //temp = runge_kutta(psi);
     time = clock();
-    temp = engolindo_sapos(psi);
-    //temp = cuda_doround(psi);
-    /*ofstream ouch("lloo.txt");
-    aux::printCoord(ouch, temp);
-      int lel; cin >> lel; cout << "running" << endl;*/
-      /*
-    float no = 0.;// = aux::norma(temp);
+    temp = cuda_doround(psi);
+    /*float no = 0.;// = aux::norma(temp);
     for(int i = 0; i<temp.n; i++)
     {
       for(int j = 0; j<temp.m; j++)
@@ -243,27 +238,32 @@ int main(int argc, char const *argv[]) {
       {
         temp(i, j) = temp(i, j) / multi;
       }
-    }
+    }*/
 
-    cout << "Iteração: " << iter << /*" <=> Norma: " << no << " <=> T: " << t << endl;
+    cout << "Iteração: " << iter << endl;//<< " <=> Norma: " << no << " <=> T: " << t << endl;
 
-    stringstream f, op;
-    f << "dados/t" << iter++ << ".txt";
-    //op << "dados/gnuplot" << iter << ".txt";
-    ofstream o(f.str().c_str());
-    //ofstream os(op.str().c_str());
-    for(int i = 0; i<temp.n; i++)
+    if(iter % 10 == 0)
     {
-      for(int j = 0; j<temp.m; j++)
+      stringstream f, op;
+      f << "dados/t" << iter<< ".txt";
+      //op << "dados/gnuplot" << iter << ".txt";
+      ofstream o(f.str().c_str());
+      //ofstream os(op.str().c_str());
+      for(int i = 0; i<temp.n; i++)
       {
-        float x = -10.0f + i*h;
-        float y = -10.0f + j*h;
-        float mod = temp(i, j).mod();
-        //os << i << "\t" << j << "\t" << temp(i, j) << endl;
-        o << x << "\t" << y << "\t" << mod*mod << endl;
+        for(int j = 0; j<temp.m; j++)
+        {
+          float x = -10.0f + i*h;
+          float y = -10.0f + j*h;
+          float mod = temp(i, j).mod();
+          //os << i << "\t" << j << "\t" << temp(i, j) << endl;
+          o << x << "\t" << y << "\t" << mod*mod << endl;
+        }
+        o << "\n";
       }
-      o << "\n";
     }
+
+    iter++;
 
     psi = temp;
     times.push_back(clock() - time);
@@ -294,7 +294,6 @@ int main(int argc, char const *argv[]) {
   }
 
   cout << "Average iteration time: " << ((double)avg/(double)CLOCKS_PER_SEC) << endl;
-  */
   /*
   cout << res;
   int lel; cin >> lel; cout << "running" << endl;

@@ -46,7 +46,7 @@ float cuda_norm(complex* l, float* linhas, int n, int m)
 {
   dim3 tpb(8);
   dim3 nb(n / tpb.x);
-  cuda_reduction<<<nb, tpb>>>(n, m, l , linhas);
+  cuda_reduction<<<nb, tpb>>>(n, m, l, linhas);
   //cuda_reduction<<<nb, tpb>>>(n/8, 8, linhas, linhas);
   //cuda_reduction<<<nb, tpb>>>(1, n/8, linhas, linhas);
   float* host = new float[n];
@@ -56,6 +56,7 @@ float cuda_norm(complex* l, float* linhas, int n, int m)
   {
     v = v + host[i];
   }
+  delete[] host;
   return v;
 }
 
@@ -86,7 +87,7 @@ float cuda_norm(matriz& l)
   cudaFree(linhas);
   delete[] host;
 
-  return v*h*h;
+  return v;
 
 }
 
@@ -146,19 +147,19 @@ matriz cuda_doround(matriz& l)
 
 }
 
-__global__ void cuda_divideandmod(int n, int m, float val, complex* l, complex* r)
+__global__ void cuda_divideandmod(int n, int m, float val, complex* l, complex* r, complex* toHost)
 {
   int i = (blockIdx.x * blockDim.x) + threadIdx.x;
   int j = (blockIdx.y * blockDim.y) + threadIdx.y;
 
   complex c = l[i * m + j] / val;
   float modd = c.mod();
-  r[i * m + j] = modd*modd;
+  r[i * m + j] = c;
+  toHost[i * m + j] = modd*modd;
 }
 
-void cuda_simulate(matriz& l, float tmax)
+/*void cuda_simulate(matriz& l, float tmax)
 {
-    matriz res(l.n, l.m);
     complex *mat, *psi1, *psi2, *psi3, *toHost;
     float* linhas;
 
@@ -179,33 +180,39 @@ void cuda_simulate(matriz& l, float tmax)
     for(float t = 0.0f; t<tmax; t += dt)
     {
       cuda_psi1<<<nb, tpb>>>(mat, psi1, l.n, l.m);
+      cudaThreadSynchronize();
       cuda_psi2<<<nb, tpb>>>(mat, psi1, psi2, l.n, l.m);
+      cudaThreadSynchronize();
       cuda_psin<<<nb, tpb>>>(mat, psi2, psi3, l.n, l.m);
+      cudaThreadSynchronize();
 
       float f = cuda_norm(psi3, linhas, l.n, l.m);
+      cout << "Norma: " << f << endl;
       f = sqrt(f);
-      cuda_divideandmod<<<nb, tpb>>>(l.n, l.m, f, psi3, mat);
+      cuda_divideandmod<<<nb, tpb>>>(l.n, l.m, f, psi3, mat, toHost);
+      cudaThreadSynchronize();
       if(iter % 10 == 0)
       {
-        cudaMemcpy(toHost, mat, sizeof(complex)*l.n*l.m, cudaMemcpyDeviceToDevice);
-        pid_t pid = fork();
+        /*pid_t pid = fork();
         if(pid == 0)
         {
-          cudaMemcpyAsync(res.mat, toHost, sizeof(complex)*l.n*l.m, cudaMemcpyDeviceToHost);
+          matriz res(128, 128);
+          cudaMemcpy(res.mat, toHost, sizeof(complex)*l.n*l.m, cudaMemcpyDeviceToHost);
           stringstream s;
           s << "dados/t" << iter << ".txt";
           ofstream o(s.str().c_str());
           res.printCoord(o);
+          o.flush();
           o.close();
-          kill(getpid(), SIGTERM);
-        }
+        //  kill(getpid(), SIGTERM);
+        //}
       }
       iter++;
     }
 
     cudaFree(linhas); cudaFree(psi1); cudaFree(psi2); cudaFree(psi3); cudaFree(mat);
     return;
-}
+}*/
 
 __device__ complex cuda_f(int i, int j, complex c, complex c1, complex c2, complex c3, complex c4)
 {

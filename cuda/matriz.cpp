@@ -351,12 +351,17 @@ void matriz::fill(complex val)
 
 void matriz::printCoord(ostream& o)
 {
-	for(int i = 0; i<n; i++)
+	float h = 20.0/128.0;
+	for(int i = -n/2; i<n/2; i++)
 	{
-		for(int j = 0; j<m; j++)
+		//#pragma omp parallel for
+		for(int j = -m/2; j<m/2; j++)
 		{
-			o << i << "\t" << j << "\t" << (*this)(i, j) << endl;
+			float x = i * h;
+			float y = j * h;
+			o << x << "\t" << y << "\t" << (*this)(i, j) << endl;
 		}
+		o << "\n\n";
 	}
 }
 

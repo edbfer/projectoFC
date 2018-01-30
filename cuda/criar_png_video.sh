@@ -6,7 +6,7 @@
 #res: path where the data files are
 #pathfig: path to move the png figures
 
-namevid="cuda.avi"
+namevid="cudanovo.avi"
 file_ini="t"
 file_end=".txt"
 file_endpng=".png"
@@ -17,7 +17,7 @@ b=10.0   #y range +- b
 nametot=""
 
 #for r1 in {start..end..step}; do
-for r1 in {1..3278..1}; do
+for r1 in {0..4920..10}; do
 
 name=$res$file_ini$r1$file_end
 name0=$(basename $name .txt)
