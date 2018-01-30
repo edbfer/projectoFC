@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <omp.h>
+#include <vector>
+#include <algorithm>
 
 #include "complex.h"
 #include "matriz.h"
@@ -207,10 +209,14 @@ int main(int argc, char const *argv[]) {
     }
   }
 
+  vector<int> times;
+
+  clock_t time;
   for(float t = 0.0f; t<tmax; t += dt)
   {
     //temp = engolindo_sapos(psi);
     //temp = runge_kutta(psi);
+    time = clock();
     temp = cuda_doround(psi);
     /*ofstream ouch("lloo.txt");
     aux::printCoord(ouch, temp);
@@ -256,7 +262,34 @@ int main(int argc, char const *argv[]) {
     }
 
     psi = temp;
+    times.push_back(time - clock());
   }
+
+  float avg;
+  int num = (int)tmax/dt;
+  for(int i = 0; i<num; i++)
+  {
+    avg += times[i];
+  }
+  avg /= num;
+
+  sort(times.begin(), times.end());
+
+  cout << "10 Best Iterations: " << endl;
+  for(int i = 0; i<10; i++)
+  {
+    cout << i << ": " << times[i] << endl;
+  }
+
+  sort(times.begin(), times.end(), std::greater<int>());
+
+  cout << "10 Worst Iterations: " << endl;
+  for(int i = 0; i<10; i++)
+  {
+    cout << i << ": " << times[i] << endl;
+  }
+
+  cout << "Average iteration time: " << avg << endl;
 
   /*
   cout << res;

@@ -4,10 +4,10 @@
 #include <cstdio>
 
 __constant__ float cG;
-__device__ float cgama;
-__device__ float comega;
-__device__ float cdt;
-__device__ float ch;
+__constant__ float cgama;
+__constant__ float comega;
+__constant__ float cdt;
+__constant__ float ch;
 extern float h;
 
 using namespace std;

@@ -1,4 +1,4 @@
-i = 0;
+i = 600;
 while((1)){
   set title "t=".i
   show title
