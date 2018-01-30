@@ -39,20 +39,6 @@ complex aux::conjugate(int i, int j, complex c)
   return c * (~c);
 }
 
-complex aux::norma(matriz& psi)
-{
-  matriz r = psi.transform(aux::conjugate);
-  complex v = 0;
-  for(int i = 1; i<psi.n-1; i++)
-  {
-    for(int j = 1; j<psi.m-1; j++)
-    {
-      v = v + r(i, j)*h*h;
-    }
-  }
-  return v;
-}
-
 matriz aux::dx(matriz& l)
 {
   matriz res(l.n, l.m);
@@ -109,7 +95,7 @@ matriz aux::d2y(matriz& l)
 {
   matriz res(l.n, l.m);
   /*matriz d = matriz::tridiagonal(1, -2, 1, l.n);
-  matriz t = transpose(l);
+  matriz t = transpose(l);1.74971e+19
   res = d * t;*/
   for(int i = 1; i<l.n-1; i++)
   {
@@ -131,6 +117,29 @@ void aux::printCoord(ostream &o, matriz &l)
       /*float x = -10.0f + i*h;
       float y = -10.0f + j*h;*/
       o << i << "\t" << j << "\t" << l(i, j) << endl;
+    }
+  }
+}
+
+void aux::norma(matriz& l)
+{
+  float n = 0;// = aux::norma(temp);
+  for(int i = 0; i<l.n; i++)
+  {
+    for(int j = 0; j<l.m; j++)
+    {
+      float modu = l(i, j).mod();
+      n = n + modu*modu*h*h;
+    }
+  }
+  cout << "Norma: " << n << endl;
+  float multi = sqrt(n);
+
+  for(int i = 0; i<l.n; i++)
+  {
+    for(int j = 0; j<l.m; j++)
+    {
+      l(i, j) = l(i, j) / multi;
     }
   }
 }

@@ -13,14 +13,13 @@ namespace aux
   complex mx(int i, int j, complex c);
   complex my(int i, int j, complex c);
 
-  complex norma(matriz& psi);
-
   matriz dx(matriz& l);
   matriz dy(matriz& l);
   matriz d2x(matriz& l);
   matriz d2y(matriz& l);
 
   void printCoord(ostream& o, matriz& l);
+  void norma(matriz& l);
 }
 
 #endif

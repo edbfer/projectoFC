@@ -149,9 +149,9 @@ matriz engolindo_sapos(matriz& l)
     }
   }
   //p3 << r;
-
   return r;
 }
+
 
 int main(int argc, char const *argv[]) {
 
@@ -165,21 +165,16 @@ int main(int argc, char const *argv[]) {
   iy = -10.0f;
   dt = 0.0061f;
 
-  cuda_setup(G, g, omega, dt, h);
+  //cuda_setup(G, g, omega, dt, h);
 
-  for(int i = 0; i<psi.n; i++)
-  {
-    for(int j = 0; j<psi.m; j++){
-      float x = -10.0f + i*h;
-      float y = -10.0f + j*h;
-      psi(i, j) = 1.;
-    }
-  }
+  psi.fill(1.0f);
 
   //psi.fill(complex(1.0f, 1.0f));
   ifstream c("cond.txt");
   psi.fill(c);
   c.close();
+
+  aux::norma(psi);
 
   float tmax;
   cout << "Tempo máximo: " << endl;
@@ -188,30 +183,12 @@ int main(int argc, char const *argv[]) {
   matriz temp(128, 128);
   int iter = 0;
 
-  float n = 0;// = aux::norma(temp);
-  for(int i = 1; i<psi.n-1; i++)
-  {
-    for(int j = 1; j<psi.m-1; j++)
-    {
-      float modu = psi(i, j).mod();
-      n = n + modu*modu*h*h;
-    }
-  }
-  float multi = sqrt(n);
-  //  #pragma omp parallel for
-  for(int i = 1; i<psi.n-1; i++)
-  {
-    for(int j = 1; j<psi.m-1; j++)
-    {
-      psi(i, j) = psi(i, j) / multi;
-    }
-  }
-
   for(float t = 0.0f; t<tmax; t += dt)
   {
-    //temp = engolindo_sapos(psi);
+    temp = engolindo_sapos(psi);
+    aux::norma(temp);
     //temp = runge_kutta(psi);
-    temp = cuda_doround(psi);
+    //temp = cuda_doround(psi);
     /*ofstream ouch("lloo.txt");
     aux::printCoord(ouch, temp);
       int lel; cin >> lel; cout << "running" << endl;*/
@@ -262,5 +239,5 @@ int main(int argc, char const *argv[]) {
   cout << res;
   int lel; cin >> lel; cout << "running" << endl;
   */
-
+  return 0;
 }

@@ -5,6 +5,7 @@
 #include "complex.h"
 #include <vector>
 #include <cstring>
+#include <omp.h>
 
 using namespace std;
 
@@ -340,8 +341,10 @@ void matriz::fill(istream& in)
 
 void matriz::fill(complex val)
 {
+	#pragma omp parallel for
 	for(int i = 0; i<n; i++)
 	{
+		#pragma omp simd
 		for(int j = 0; j<m; j++)
 		{
 			(*this)(i, j) = val;
