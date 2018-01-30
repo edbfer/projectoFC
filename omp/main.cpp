@@ -6,7 +6,6 @@
 #include "complex.h"
 #include "matriz.h"
 #include "aux.h"
-#include "cuda.cuh"
 
 using namespace std;
 
@@ -37,18 +36,10 @@ matriz f(matriz& l)
   matriz res = laplaciano + par2 + par3 - par4;
   res = res * (complex)((complex(1, 0)/complex(-g, 1)));
   return res;
-  //return dx;
 }
 
 complex f(int i, int j, complex c, complex c1, complex c2, complex c3, complex c4)
 {
-  /*matriz res(l.n, l.m);
-  #pragma omp parallel for
-  for(int i = 1; i<l.n-1; i++)iterate
-  {
-    for(int j = 1; j<l.m-1; j++)
-    {*/
-
     if((i == 0) || (i == 127) || (j == 0) || (j == 127))
       return 0;
 
@@ -77,37 +68,16 @@ complex f(int i, int j, complex c, complex c1, complex c2, complex c3, complex c
       complex m = complex(-g, 1.0f);
       complex resultado = r/m;
       return  resultado;
-
-  //return res;
 }
+
 
 matriz runge_kutta(matriz& l)
-{
-  matriz fl = f(l);
-  fl = fl * (complex)dt;
-  matriz psi1 = l + fl;
-  matriz fpsi1 = f(psi1);
-  fpsi1 = fpsi1 * complex(0.25f*dt, 0);
-  matriz psi2 = (l*complex(0.75f, 0));
-  psi2 = psi2 + (psi1*complex(0.25f, 0));
-  psi2 = psi2 + fpsi1;// + (psi1*(complex)0.25f) + (fpsi1*(complex)(0.25f*dt));
-  matriz fpsi2 = f(psi2);
-  fpsi2 = fpsi2 *(complex((2.0f/3.0f)*dt, 0));
-  matriz res = (l*(complex((1.0f/3.0f), 0)));
-  res = res + (psi2*(complex((2.0f/3.0f), 0)));
-  res = res + fpsi2;
-  return res;
-  //return fl;
-}
-
-matriz engolindo_sapos(matriz& l)
 {
   matriz r(128, 128);
   matriz psi(128, 128);
   matriz psi2(128, 128);
-  //#pragma omp parallel for
-  //ofstream p1("psi1.txt");
-  #pragma omp parallel for
+
+  #pragma omp parallel for //colapse()
   for(int i = 1; i<l.n-1; i++)
   {
     for(int j = 1; j<l.m-1; j++)
@@ -117,8 +87,6 @@ matriz engolindo_sapos(matriz& l)
         psi(i, j) = l(i,j) + func;
     }
   }
-  //p1 << psi;
-  //ofstream p2("psi2.txt");
   #pragma omp parallel for
   for(int i = 1; i<l.n-1; i++)
   {
@@ -132,8 +100,6 @@ matriz engolindo_sapos(matriz& l)
         psi2(i, j) = lat + antigo + func;
     }
   }
-  //p2 << r;
-  //ofstream p3("psi3.txt");
   #pragma omp parallel for
   for(int i = 1; i<l.n-1; i++)
   {
@@ -148,7 +114,6 @@ matriz engolindo_sapos(matriz& l)
       r(i, j) = lat + antigo + func;
     }
   }
-  //p3 << r;
   return r;
 }
 
@@ -165,11 +130,8 @@ int main(int argc, char const *argv[]) {
   iy = -10.0f;
   dt = 0.0061f;
 
-  //cuda_setup(G, g, omega, dt, h);
-
   psi.fill(1.0f);
 
-  //psi.fill(complex(1.0f, 1.0f));
   ifstream c("cond.txt");
   psi.fill(c);
   c.close();
@@ -185,40 +147,14 @@ int main(int argc, char const *argv[]) {
 
   for(float t = 0.0f; t<tmax; t += dt)
   {
-    temp = engolindo_sapos(psi);
+    temp = runge_kutta(psi);
     aux::norma(temp);
-    //temp = runge_kutta(psi);
-    //temp = cuda_doround(psi);
-    /*ofstream ouch("lloo.txt");
-    aux::printCoord(ouch, temp);
-      int lel; cin >> lel; cout << "running" << endl;*/
 
-    /*float no = 0.;// = aux::norma(temp);
-    for(int i = 0; i<temp.n; i++)
-    {
-      for(int j = 0; j<temp.m; j++)
-      {
-        float mod = temp(i, j).mod();
-        no = no + mod*mod*h*h;
-      }
-    }
-    float multi = sqrt(no);
-    //#pragma omp parallel for
-    for(int i = 0; i<temp.n; i++)
-    {
-      for(int j = 0; j<temp.m; j++)
-      {
-        temp(i, j) = temp(i, j) / multi;
-      }
-    }*/
-
-    cout << "Iteração: " << iter << /*" <=> Norma: " << no <<*/ " <=> T: " << t << endl;
+    cout << "Iteração: " << iter <<  " <=> T: " << t << endl;
 
     stringstream f, op;
     f << "dados/t" << iter++ << ".txt";
-    //op << "dados/gnuplot" << iter << ".txt";
     ofstream o(f.str().c_str());
-    //ofstream os(op.str().c_str());
     for(int i = 0; i<temp.n; i++)
     {
       for(int j = 0; j<temp.m; j++)
@@ -226,7 +162,6 @@ int main(int argc, char const *argv[]) {
         float x = -10.0f + i*h;
         float y = -10.0f + j*h;
         float mod = temp(i, j).mod();
-        //os << i << "\t" << j << "\t" << temp(i, j) << endl;
         o << x << "\t" << y << "\t" << mod*mod << endl;
       }
       o << "\n";
@@ -234,10 +169,5 @@ int main(int argc, char const *argv[]) {
 
     psi = temp;
   }
-
-  /*
-  cout << res;
-  int lel; cin >> lel; cout << "running" << endl;
-  */
   return 0;
 }
