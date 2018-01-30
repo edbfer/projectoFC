@@ -165,6 +165,8 @@ int main(int argc, char const *argv[]) {
   iy = -10.0f;
   dt = 0.0061f;
 
+  cuda_setup(G, g, omega, dt, h);
+
   for(int i = 0; i<psi.n; i++)
   {
     for(int j = 0; j<psi.m; j++){

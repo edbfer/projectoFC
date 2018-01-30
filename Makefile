@@ -1,7 +1,7 @@
 INCLUDES=/usr/local/cuda-9.1/include
 LIBINC=/usr/local/cuda-9.1/lib64
 CFLAGS= -I$(INCLUDES) -g -O3
-CUDAFLAGS= $(CFLAGS) -G -arch=sm_30 -ccbin /usr/bin/g++-5 -Xcompiler -fopenmp
+CUDAFLAGS= $(CFLAGS) -G -gencode arch=compute_50,code=sm_50 -gencode arch=compute_35,code=sm_35 -ccbin /usr/bin/g++-5 -Xcompiler -fopenmp
 LFLAGS= -L$(LIBINC)
 
 all: gpe

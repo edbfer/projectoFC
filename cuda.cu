@@ -1,19 +1,39 @@
 #include "cuda.cuh"
 
-__device__ float cG;
+#include <iostream>
+#include <cstdio>
+
+__constant__ float cG;
 __device__ float cgama;
 __device__ float comega;
 __device__ float cdt;
 __device__ float ch;
 extern float h;
 
+using namespace std;
+
+__global__ void cuda_test()
+{
+  printf("device: G = %lf, gamma = %lf, omega = %lf, dt = %lf, h = %lf\n", cG, cgama, comega, cdt, ch);
+}
+
 void cuda_setup(float G, float gama, float omega, float dt, float h)
 {
-  cudaMemcpyToSymbol("cG", &cG, sizeof(float), 0, cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol("cgama", &cgama, sizeof(float), 0, cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol("comega", &comega, sizeof(float), 0, cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol("cdt", &cdt, sizeof(float), 0, cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol("ch", &ch, sizeof(float), 0, cudaMemcpyHostToDevice);
+  cudaError_t err;
+  err = cudaMemcpyToSymbol(cG, &G, sizeof(float));
+  if(!(err == cudaSuccess)) {cout << "Failed CUDA Operation, in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << endl;}
+  err = cudaMemcpyToSymbol(cgama, &gama, sizeof(float), 0, cudaMemcpyHostToDevice);
+  if(!(err == cudaSuccess)) {cout << "Failed CUDA Operation, in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << endl;}
+  err = cudaMemcpyToSymbol(comega, &omega, sizeof(float), 0, cudaMemcpyHostToDevice);
+  if(!(err == cudaSuccess)) {cout << "Failed CUDA Operation, in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << endl;}
+  err = cudaMemcpyToSymbol(cdt, &dt, sizeof(float), 0, cudaMemcpyHostToDevice);
+  if(!(err == cudaSuccess)) {cout << "Failed CUDA Operation, in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << endl;}
+  err = cudaMemcpyToSymbol(ch, &h, sizeof(float), 0, cudaMemcpyHostToDevice);
+  if(!(err == cudaSuccess)) {cout << "Failed CUDA Operation, in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << endl;}
+
+  cudaThreadSynchronize();
+
+  cuda_test<<<1, 1>>>();
 }
 
 float cuda_norm(matriz& l)
