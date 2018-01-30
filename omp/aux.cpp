@@ -8,7 +8,6 @@ complex aux::x2y2(int i, int j, complex c)
   float x = -10.0f + i*h;
   float y = -10.0f + j*h;
   complex m = ((x*x) + (y*y))/2.0f;
-  //cout << "("<< x << "," << y << "," << "," << c << "," << c*m << ")" << endl;
   return c*m;
 
 }
@@ -35,15 +34,12 @@ complex aux::mx(int i, int j, complex c)
 complex aux::conjugate(int i, int j, complex c)
 {
   complex a =  ~c;
-  //cout << "~c: " << a << " " << "c: " << c << endl;
   return c * (~c);
 }
 
 matriz aux::dx(matriz& l)
 {
   matriz res(l.n, l.m);
-  /*matriz d = matriz::tridiagonal(-1, 0, 1, l.n);
-  res = d * l;*/
   for(int i = 1; i<l.n-1; i++)
   {
     for(int j = 1; j<l.m-1; j++)
@@ -58,9 +54,6 @@ matriz aux::dx(matriz& l)
 matriz aux::dy(matriz& l)
 {
   matriz res(l.n, l.m);
-  /*matriz d = matriz::tridiagonal(-1, 0, 1, l.n);
-  matriz t = transpose(l);
-  res = d * t;*/
   for(int i = 1; i<l.n-1; i++)
   {
     for(int j = 1; j<l.m-1; j++)
@@ -75,9 +68,6 @@ matriz aux::dy(matriz& l)
 matriz aux::d2x(matriz& l)
 {
   matriz res(l.n, l.m);
-  /*matriz d = matriz::tridiagonal(1, -2, 1, l.n);
-  cout << d << endl;
-  res = d * l;*/
   for(int i = 1; i<l.n-1; i++)
   {
     for(int j = 1; j<l.m-1; j++)
@@ -86,17 +76,12 @@ matriz aux::d2x(matriz& l)
       res(i, j) = res(i, j) / (h*h);
     }
   }
-  //complex m = (1.0f)/(h*h);
-  //res = res * m;
   return res;
 }
 
 matriz aux::d2y(matriz& l)
 {
   matriz res(l.n, l.m);
-  /*matriz d = matriz::tridiagonal(1, -2, 1, l.n);
-  matriz t = transpose(l);1.74971e+19
-  res = d * t;*/
   for(int i = 1; i<l.n-1; i++)
   {
     for(int j = 1; j<l.m-1; j++)
@@ -114,8 +99,6 @@ void aux::printCoord(ostream &o, matriz &l)
   {
     for(int j = 0; j<l.m; j++)
     {
-      /*float x = -10.0f + i*h;
-      float y = -10.0f + j*h;*/
       o << i << "\t" << j << "\t" << l(i, j) << endl;
     }
   }
@@ -123,7 +106,7 @@ void aux::printCoord(ostream &o, matriz &l)
 
 void aux::norma(matriz& l)
 {
-  float n = 0;// = aux::norma(temp);
+  float n = 0;
   for(int i = 0; i<l.n; i++)
   {
     for(int j = 0; j<l.m; j++)

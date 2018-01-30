@@ -1,7 +1,7 @@
 reset;
-text_title="t = 153"
-fileout="t153.png"
-filein="dados/t153.txt"
+text_title="t = 34"
+fileout="t34.png"
+filein="dados/t34.txt"
 fileinn=""
 set output
 a=10.0

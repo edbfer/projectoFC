@@ -29,64 +29,6 @@ matriz::~matriz()
 	delete[] mat;
 }
 
-matriz matriz::id(int n)
-{
-	matriz res(n, n);
-	for(int i = 0; i<n; i++)
-	{
-		res(i, i) = ((complex) 1.);
-	}
-	return res;
-}
-
-matriz permutation(int n, int l1, int l2)
-{
-	matriz res = matriz::id(n);
-	res.swapLine(l1, l2);
-	return res;
-}
-
-matriz matriz::random(int n, int m)
-{
-	matriz res(n, m);
-	for(int i = 0; i<n; i++)
-	{
-		for(int j = 0; j<m; j++)
-		{
-			res(i, j) = (complex) ((double)rand()/(double) RAND_MAX)*10;
-		}
-	}
-	return res;
-}
-
-matriz matriz::hermitian(int n)
-{
-	matriz res(n, n);
-	for(int i = 0; i<n; i++){
-		for(int j = 0; j<i+1; j++)
-		{
-			res(i, j) = (complex) ((double)rand()/(double) RAND_MAX)*10;
-			res(j, i) = res(i, j);
-		}
-	}
-	return res;
-}
-
-matriz matriz::tridiagonal(complex d0, complex dp, complex d1, int x)
-{
-	/*matriz res(x, x);
-	for (int i = 1; i<x-1-1-1; i++)
-	{
-		res(i, i) = dp;
-		int j2 = i + 1;
-		res(i, j2) = d1;
-		res(j2, i) = d0;
-	}
-	int j2 = x-1-1;
-	res(j2, j2) = dp;
-	res()
-	return res;*/
-}
 
 complex& matriz::operator()(const int& x, const int& y)
 {
@@ -118,25 +60,12 @@ matriz& matriz::operator=(const matriz& m1)
 			(*this)(i, j) = m1(i, j);
 		}
 	}
-	//memcpy(mat, m1.mat, sizeof(complex)*n*m);
 
 	dirty = m1.dirty;
 	det = m1.det;
 
 	return *this;
 }
-
-/*matriz matriz::operator-()
-{
-	for(int i = 0; i<n; i++)
-	{
-		for(int j = 0; j<m; j++)
-		{
-			(*this)(i, j) = -(*this)(i, j);
-		}
-	}
-	return *this;
-}*/
 
 matriz matriz::operator++(int)
 {
@@ -164,54 +93,6 @@ matriz transpose(matriz& m1)
 }
 
 
-matriz extend(matriz& m1, matriz& m2)
-{
-	matriz t(m1.n, m1.m+m2.m);
-	for(int i = 0; i<t.n; i++)
-	{
-		for(int j = 0; j<m1.m; j++)
-		{
-			t(i, j) = m1(i, j);
-		}
-
-		for(int j = 0; j<m2.m; j++)
-		{
-			t(i, j+m1.m) = m2(i, j);
-		}
-	}
-
-	return t;
-}
-
-matriz extract(matriz& m1, int x0, int y0, int x1, int y1)
-{
-	matriz r(x1 - x0 + 1, y1 - y0 + 1);
-	for (int i = x0; i <=x1; i++)
-	{
-		for (int j = y0; j <= y1; j++)
-		{
-			r(i - x0, j - y0) = m1(i, j);
-		}
-	}
-	return r;
-}
-
-void matriz::swapLine(int l1, int l2)
-{
-	complex* r = new complex[m];
-	memcpy(r, (*this)[l1], sizeof(complex)*m);
-	memcpy((*this)[l1], (*this)[l2], sizeof(complex)*m);
-	memcpy((*this)[l2], r, sizeof(complex)*m);
-}
-
-matriz matriz::swapColForVector(int col, matriz& vec)
-{
-	for (int i = 0; i < n; i++)
-	{
-		(*this)(i, col) = vec(i, 0);
-	}
-	return *this;
-}
 
 matriz operator^(const matriz& m1, const int e)
 {
@@ -235,7 +116,7 @@ matriz operator+(const matriz& m1, const matriz& m2)
 	}
 	return res;
 }
-// matriz sum_cuda(matriz& m1, matriz& m2);
+
 matriz operator-(const matriz& m1, const matriz& m2)
 {
 	matriz res(m1.n, m1.m);
@@ -281,7 +162,7 @@ matriz matriz::operator~()
 	}
 	return *this;
 }
-// matriz multiply_cuda(matriz& m1, matriz& m2);
+
 matriz operator*(const matriz& m1, complex v)
 {
 	matriz res = m1;

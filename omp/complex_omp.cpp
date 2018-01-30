@@ -34,12 +34,6 @@ complex::complex() : real(0.), im(0.)
 	return res;
 }
 
-/*complex complex::operator-()
-{
-	complex res(-real, -im);
-	return res;
-}*/
-
  complex complex::operator~() const
 {
 	complex res(real, -im);
@@ -66,13 +60,6 @@ complex::complex() : real(0.), im(0.)
 
  complex operator/(const complex& c1, const complex& c2)
 {
-	/*complex res(0, 0);
-	float m = c2.real * c2.real + c2.im * c2.im;
-	res.real = (c1.real * c2.real + c1.im * c2.im)/m;
-	res.im	= (c1.im * c2.real - c1.real * c2.im)/m;
-	return res;*/
-	/*complex res = (c1*~c2)/(~c2*c2).real;
-	return res;*/
 	complex res, conj = ~c2;
 	float norma;
 	norma = c2.mod();
@@ -106,7 +93,6 @@ ostream& operator<<(ostream& out, complex& c1)
 {
 	const char* sign = (c1.im > 0) ? "+" : ((c1.im < 0) ? "-" : "+");
 	out << c1.real << sign << fabs(c1.im) << "i";
-	//out << c1.real << " ";
 	return out;
 }
 
